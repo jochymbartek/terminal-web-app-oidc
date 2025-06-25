@@ -1,47 +1,48 @@
+version: "3.9"
+
 services:
   postgres_db:
-      image: postgres:16
-      restart: always
-      volumes:
-        - /srv/keycloak/data/postgres16:/var/lib/postgresql/data
-      environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    image: postgres:16
+    restart: always
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak:
-      # build: .
-      restart: on-failure:5
-      image: quay.io/keycloak/keycloak:25.0.1
-      environment:
-        KC_LOG_LEVEL: debug
-        KC_DB: postgres
-        KC_DB_URL: 'jdbc:postgresql://postgres_db/keycloak'
-        KC_DB_USERNAME: ${POSTGRES_USER}
-        KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-        KC_DB_SCHEMA: public
-        KC_HOSTNAME: ${KC_HOSTNAME}
-        KC_HTTP_ENABLED: true
-        HTTP_ADDRESS_FORWARDING: true
-        KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USERNAME}
-        KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-        KC_PROXY_HEADERS: xforwarded
-      entrypoint: ["/opt/keycloak/bin/kc.sh"]
-      command: ["start"]
-      ports:
-        - '127.0.0.1:8080:8080'
-      depends_on:
-        - postgres_db
+    image: quay.io/keycloak/keycloak:25.0.1
+    restart: on-failure:5
+    environment:
+      KC_LOG_LEVEL: debug
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres_db/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_DB_SCHEMA: public
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_HTTP_ENABLED: true
+      HTTP_ADDRESS_FORWARDING: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USERNAME}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_PROXY_HEADERS: xforwarded
+    entrypoint: ["/opt/keycloak/bin/kc.sh"]
+    command: ["start"]
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - postgres_db
+
   nginx:
     image: nginx:stable
     restart: unless-stopped
     depends_on:
       - keycloak
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - "/etc/letsencrypt/live/keycloak.bjochym.solutions/fullchain.pem:/etc/nginx/certs/keycloak.bjochym.solutions.crt:ro"
-      - "/etc/letsencrypt/live/keycloak.bjochym.solutions/privkey.pem:/etc/nginx/certs/keycloak.bjochym.solutions.key:ro"
-
+      - ./nginx/nginx_keycloak.keycloak.conf:/etc/nginx/nginx.conf:ro
+      - ./certs/${KC_HOSTNAME}/fullchain.pem:/etc/nginx/certs/${KC_HOSTNAME}.crt:ro
+      - ./certs/${KC_HOSTNAME}/privkey.pem:/etc/nginx/certs/${KC_HOSTNAME}.key:ro
     ports:
       - "80:80"
-      - "443:443"  
+      - "443:443"
