@@ -11,22 +11,22 @@
 
 ---
 
-## 🚀 Quick Start / Szybki start
+## 🚀 Quick Start 
 
-Poniżej znajdziesz kompletną instrukcję krok-po-kroku w wersji **angielskiej** i **polskiej**, gotową do wklejenia do Twojego `README.md`.
+Below you will find complete step-by-step instructions in **English** and **Polish**, ready to paste into your `README.md`.
 
 ---
 
-### 1. Clone repository / Sklonuj repozytorium
+### 1. Clone repository
 
 ```bash
-git clone https://github.com/twoj-uzytkownik/terminal-web-app.git
+git clone https://github.com/jochymbartek/terminal-web-app-oidc.git
 cd terminal-web-app
 ```
 
 ---
 
-### 2. Create `.env` / Utwórz plik `.env`
+### 2. Create `.env` 
 
 ```bash
 cp .env.example .env
@@ -50,20 +50,19 @@ KEYCLOAK_ADMIN_PASSWORD=A4m7V8rBzHk9wXc1
 
 ---
 
-### 4. Prepare folders / Przygotuj foldery
+### 4. Prepare folders 
 
 ```bash
 mkdir -p data/postgres
 mkdir -p certs/${KC_HOSTNAME}/
 ```
 
-> `${KC_HOSTNAME}` = wartość z `.env` (np. `keycloak.local`)  
-> Folder `certs/` i `data/` nie są commitowane do repo.
+> `${KC_HOSTNAME}` = value from `.env` (example `keycloak.local`)  
+> Directories `certs/` i `data/` are not committed to the repository.
 
 ---
 
 ### 5. Generate TLS certs (optional)  
-### 5. Wygeneruj certyfikaty TLS (opcjonalnie)
 
 ```bash
 sudo apt update
@@ -76,15 +75,14 @@ cp /etc/letsencrypt/live/${KC_HOSTNAME}/privkey.pem   certs/${KC_HOSTNAME}/
 
 ---
 
-### 6. Run the stack / Uruchom cały system
-
+### 6. Run the stack 
 ```bash
 docker compose up -d
 ```
 
 ---
 
-### 7. Access the portal / Otwórz portal w przeglądarce
+### 7. Access the portal 
 
 - https://${KC_HOSTNAME}  
 - Login: `${KEYCLOAK_ADMIN_USERNAME}`  
@@ -92,7 +90,7 @@ docker compose up -d
 
 ---
 
-### 8. Logs (optional) / Logi (opcjonalnie)
+### 8. Logs (optional) 
 
 ```bash
 docker compose logs -f postgres_db
@@ -102,8 +100,7 @@ docker compose logs -f nginx
 
 ---
 
-## 📁 Project structure / Struktura projektu
-
+## 📁 Project structure 
 ```
 terminal-web-app/
 ├── app/                   # PHP & HTML (login/logout)
@@ -124,7 +121,7 @@ terminal-web-app/
 
 ---
 
-## 🛑 `.gitignore` sample / Przykład `.gitignore`
+## 🛑 `.gitignore` sample 
 
 ```gitignore
 # sensitive / runtime data
@@ -139,7 +136,7 @@ node_modules/
 
 ---
 
-**That's it! / To wszystko!**  
-Teraz każdy, kto sklonuje repo, będzie miał jasne instrukcje jak skonfigurować, wgrać certyfikaty i uruchomić cały stack lokalnie.  
-Więcej szczegółów zaawansowanych znajdziesz w pliku PDF: [`docs/projekt-azure.pdf`](docs/projekt-azure.pdf)
+**That's it! **  
+Now, anyone who clones the repo will have clear instructions on how to configure, upload certificates, and run the entire stack locally.
+For more advanced details, see the PDF file: [`docs/projekt-azure.pdf`](docs/projekt-azure.pdf)
 ```
